@@ -8,7 +8,7 @@ const app = express();
 
 /* ✅ CORS CONFIG */
 const allowedOrigins = [
-  "https://online-video-player-f-git-441d5f-md-jobaer-islam-alifs-projects.vercel.app"
+  "https://online-video-player-f-git-441d5f-md-jobaer-islam-alifs-projects.vercel.app/", "https://online-video-player-frontend-37fe1f88g.vercel.app/" , "https://online-video-player-frontend.vercel.app/"
 ];
 
 app.use(
