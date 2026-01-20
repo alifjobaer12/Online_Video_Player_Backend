@@ -52,6 +52,7 @@ app.get("/api/episodes", (req, res) => {
     total: episodes.length,
     episodes
   });
+  console.log("✅ API call successfull.");
 });
 
 app.listen(5000, () => {
