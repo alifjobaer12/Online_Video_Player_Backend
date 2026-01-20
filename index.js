@@ -34,7 +34,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* LOAD RAW DATA FROM JSON FILE */
-const dataPath = path.join(__dirname, "data", "Doom_At_Your_Service.json");
+const dataPath = path.join(__dirname, "data", "Spring_Fever.json");
 const rawData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
 
 /* PARSE + SORT EPISODES */
