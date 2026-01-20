@@ -6,14 +6,28 @@ import { fileURLToPath } from "url";
 
 const app = express();
 
+/* 🔐 TRUST PROXY (required for real IP on Vercel) */
+app.set("trust proxy", true);
 
+/* ✅ CORS */
 app.use(
   cors({
-    origin: true, // allow ALL origins dynamically
+    origin: true,
     methods: ["GET", "OPTIONS"],
   })
 );
 
+/* 🧾 LOG EVERY REQUEST + IP */
+app.use((req, res, next) => {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress;
+
+  console.log("📡 Client IP:", ip);
+  console.log("➡️", req.method, req.originalUrl);
+
+  next();
+});
 
 /* FIX __dirname FOR ES MODULE */
 const __filename = fileURLToPath(import.meta.url);
@@ -45,6 +59,8 @@ const parseEpisodes = () => {
 
 /* API */
 app.get("/api/episodes", (req, res) => {
+  console.log("📡 API hit from IP:", req.ip);
+
   const episodes = parseEpisodes();
 
   res.json({
@@ -52,7 +68,8 @@ app.get("/api/episodes", (req, res) => {
     total: episodes.length,
     episodes
   });
-  console.log("✅ API call successfull.");
+
+  console.log("✅ API call successful.");
 });
 
 app.listen(5000, () => {
