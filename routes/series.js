@@ -1,32 +1,42 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
+import { connectDB } from "../db/mongo.js";
 
 const router = express.Router();
-const dataPath = path.join(process.cwd(), "data", "series.json");
 
-/* HELPER: READ + SORT DATA */
-function getSortedSeries() {
-  const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+/* GET ALL SERIES */
+router.get("/", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const series = await db
+      .collection("series")
+      .find({})
+      .sort({ series: 1 })
+      .toArray();
 
-  return data.sort((a, b) => a.series.localeCompare(b.series));
-}
-
-/* GET ALL SERIES (ALWAYS SORTED) */
-router.get("/", (req, res) => {
-  const sortedData = getSortedSeries();
-  res.json(sortedData);
+    res.json(series);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-/* SEARCH BY NAME (FILTER + SORT) */
-router.get("/search", (req, res) => {
-  const { q = "" } = req.query;
+/* SEARCH SERIES */
+router.get("/search", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const q = req.query.q || "";
 
-  const result = getSortedSeries().filter((series) =>
-    series.series.toLowerCase().includes(q.toLowerCase()),
-  );
+    const result = await db
+      .collection("series")
+      .find({
+        series: { $regex: q, $options: "i" },
+      })
+      .sort({ series: 1 })
+      .toArray();
 
-  res.json(result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;
